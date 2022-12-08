@@ -1,18 +1,16 @@
-import React from "react";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
 import {
-  Text,
-  Link,
-  HStack,
-  Center,
-  Heading,
-  Switch,
-  useColorMode,
-  NativeBaseProvider,
+  Button,
   extendTheme,
+  Icon,
+  NativeBaseProvider,
   VStack,
-  Box,
 } from "native-base";
-import NativeBaseIcon from "./components/NativeBaseIcon";
+import React from "react";
+import "react-native-gesture-handler";
+import CountScreen from "./app/screens/count-screen";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 
 // Define the config
 const config = {
@@ -20,68 +18,63 @@ const config = {
   initialColorMode: "dark",
 };
 
-// extend the theme
 export const theme = extendTheme({ config });
 type MyThemeType = typeof theme;
 declare module "native-base" {
   interface ICustomTheme extends MyThemeType {}
 }
+
+const Drawer = createDrawerNavigator();
+
 export default function App() {
   return (
     <NativeBaseProvider>
-      <Center
-        _dark={{ bg: "blueGray.900" }}
-        _light={{ bg: "blueGray.50" }}
-        px={4}
-        flex={1}
-      >
-        <VStack space={5} alignItems="center">
-          <NativeBaseIcon />
-          <Heading size="lg">Welcome to NativeBase</Heading>
-          <HStack space={2} alignItems="center">
-            <Text>Edit</Text>
-            <Box
-              _web={{
-                _text: {
-                  fontFamily: "monospace",
-                  fontSize: "sm",
-                },
-              }}
-              px={2}
-              py={1}
-              _dark={{ bg: "blueGray.800" }}
-              _light={{ bg: "blueGray.200" }}
-            >
-              App.js
-            </Box>
-            <Text>and save to reload.</Text>
-          </HStack>
-          <Link href="https://docs.nativebase.io" isExternal>
-            <Text color="primary.500" underline fontSize={"xl"}>
-              Learn NativeBase
-            </Text>
-          </Link>
-          <ToggleDarkMode />
-        </VStack>
-      </Center>
+      <NavigationContainer>
+        <Drawer.Navigator initialRouteName="Home">
+          <Drawer.Screen
+            name="Counter"
+            options={{
+              headerTintColor: "white",
+              headerStyle: { backgroundColor: "#053C63" },
+              headerRight: () => (
+                <VStack
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="flex-end"
+                >
+                  <Button
+                    size="xs"
+                    leftIcon={
+                      <Icon as={Ionicons} color="white" name="search" />
+                    }
+                    variant="ghost"
+                  />
+                  <Button
+                    size="xs"
+                    leftIcon={
+                      <Icon as={AntDesign} color="white" name="filter" />
+                    }
+                    variant="ghost"
+                  />
+                  <Button
+                    size="xs"
+                    leftIcon={
+                      <Icon
+                        as={Ionicons}
+                        color="white"
+                        name="settings-outline"
+                      />
+                    }
+                    variant="ghost"
+                  />
+                </VStack>
+              ),
+            }}
+          >
+            {() => <CountScreen />}
+          </Drawer.Screen>
+        </Drawer.Navigator>
+      </NavigationContainer>
     </NativeBaseProvider>
-  );
-}
-
-// Color Switch Component
-function ToggleDarkMode() {
-  const { colorMode, toggleColorMode } = useColorMode();
-  return (
-    <HStack space={2} alignItems="center">
-      <Text>Dark</Text>
-      <Switch
-        isChecked={colorMode === "light"}
-        onToggle={toggleColorMode}
-        aria-label={
-          colorMode === "light" ? "switch to dark mode" : "switch to light mode"
-        }
-      />
-      <Text>Light</Text>
-    </HStack>
   );
 }
